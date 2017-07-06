@@ -1404,7 +1404,7 @@ func (g *Generator) generateEnum(enum *EnumDescriptor) {
 	for i, e := range enum.Value {
 		g.PrintComments(fmt.Sprintf("%s,%d,%d", enum.path, enumValuePath, i))
 
-		name := ccPrefix + *e.Name
+		name := *e.Name
 		g.P(name, " ", ccTypeName, " = ", e.Number)
 		g.file.addExport(enum, constOrVarSymbol{name, "const", ccTypeName})
 	}
@@ -1418,7 +1418,8 @@ func (g *Generator) generateEnum(enum *EnumDescriptor) {
 		if _, present := generated[*e.Number]; present {
 			duplicate = "// Duplicate value: "
 		}
-		g.P(duplicate, e.Number, ": ", strconv.Quote(*e.Name), ",")
+		shortName := (*e.Name)[len(ccPrefix):]
+		g.P(duplicate, e.Number, ": ", strconv.Quote(shortName), ",")
 		generated[*e.Number] = true
 	}
 	g.Out()
@@ -1426,7 +1427,8 @@ func (g *Generator) generateEnum(enum *EnumDescriptor) {
 	g.P("var ", ccTypeName, "_value = map[string]int32{")
 	g.In()
 	for _, e := range enum.Value {
-		g.P(strconv.Quote(*e.Name), ": ", e.Number, ",")
+		shortName := (*e.Name)[len(ccPrefix):]
+		g.P(strconv.Quote(shortName), ": ", e.Number, ",")
 	}
 	g.Out()
 	g.P("}")
@@ -2014,7 +2016,7 @@ func (g *Generator) generateMessage(message *Descriptor) {
 				log.Printf("don't know how to generate constant for %s", fieldname)
 				continue
 			}
-			def = g.DefaultPackageName(obj) + enum.prefix() + def
+			def = g.DefaultPackageName(obj) + def
 		}
 		g.P(kind, fieldname, " ", typename, " = ", def)
 		g.file.addExport(message, constOrVarSymbol{fieldname, kind, ""})
@@ -2187,7 +2189,7 @@ func (g *Generator) generateMessage(message *Descriptor) {
 					g.P("return 0 // empty enum")
 				} else {
 					first := enum.Value[0].GetName()
-					g.P("return ", g.DefaultPackageName(obj)+enum.prefix()+first)
+					g.P("return ", g.DefaultPackageName(obj)+first)
 				}
 			default:
 				g.P("return 0")
