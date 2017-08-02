@@ -2063,6 +2063,9 @@ func (g *Generator) generateMessage(message *Descriptor) {
 	// Field getters
 	var getters []getterSymbol
 	for _, field := range message.Field {
+		// Skip getters
+		break
+
 		oneof := field.OneofIndex != nil
 
 		fname := fieldNames[field]
