@@ -364,7 +364,6 @@ func (ms *messageSymbol) GenerateAlias(g *Generator, pkg string) {
 	g.P("type ", ms.sym, " ", remoteSym)
 	g.P("func (m *", ms.sym, ") Reset() { (*", remoteSym, ")(m).Reset() }")
 	g.P("func (m *", ms.sym, ") String() string { return (*", remoteSym, ")(m).String() }")
-	g.P("func (*", ms.sym, ") ProtoMessage() {}")
 	if ms.hasExtensions {
 		g.P("func (*", ms.sym, ") ExtensionRangeArray() []", g.Pkg["proto"], ".ExtensionRange ",
 			"{ return (*", remoteSym, ")(nil).ExtensionRangeArray() }")
@@ -1697,7 +1696,6 @@ func (g *Generator) RecordTypeUse(t string) {
 var methodNames = [...]string{
 	"Reset",
 	"String",
-	"ProtoMessage",
 	"Marshal",
 	"Unmarshal",
 	"ExtensionRangeArray",
@@ -1903,10 +1901,9 @@ func (g *Generator) generateMessage(message *Descriptor) {
 		g.Buffer.Write(rem)
 	}
 
-	// Reset, String and ProtoMessage methods.
+	// Reset and String methods.
 	g.P("func (m *", ccTypeName, ") Reset() { *m = ", ccTypeName, "{} }")
 	g.P("func (m *", ccTypeName, ") String() string { return ", g.Pkg["proto"], ".CompactTextString(m) }")
-	g.P("func (*", ccTypeName, ") ProtoMessage() {}")
 	var indexes []string
 	for m := message; m != nil; m = m.parent {
 		indexes = append([]string{strconv.Itoa(m.index)}, indexes...)
