@@ -277,7 +277,6 @@ import (
 type Message interface {
 	Reset()
 	String() string
-	ProtoMessage()
 }
 
 // Stats records allocation details about the protocol buffer encoders
