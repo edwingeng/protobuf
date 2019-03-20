@@ -2112,6 +2112,8 @@ func (g *Generator) generateMessageStruct(mc *msgCtx, topLevelFields []topLevelF
 
 // generateGetters adds getters for all fields, including oneofs and weak fields when applicable.
 func (g *Generator) generateGetters(mc *msgCtx, topLevelFields []topLevelField) {
+	return
+
 	for _, pf := range topLevelFields {
 		pf.getter(g, mc)
 	}
