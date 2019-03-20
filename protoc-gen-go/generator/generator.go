@@ -1380,7 +1380,7 @@ func (g *Generator) generateEnum(enum *EnumDescriptor) {
 			deprecatedValue = deprecationComment
 		}
 
-		name := ccPrefix + *e.Name
+		name := *e.Name
 		g.P(Annotate(enum.file, etorPath, name), " ", ccTypeName, " = ", e.Number, " ", deprecatedValue)
 		g.file.addExport(enum, constOrVarSymbol{name, "const", ccTypeName})
 	}
@@ -1393,7 +1393,8 @@ func (g *Generator) generateEnum(enum *EnumDescriptor) {
 		if _, present := generated[*e.Number]; present {
 			duplicate = "// Duplicate value: "
 		}
-		g.P(duplicate, e.Number, ": ", strconv.Quote(*e.Name), ",")
+		shortName := (*e.Name)[len(ccPrefix):]
+		g.P(duplicate, e.Number, ": ", strconv.Quote(shortName), ",")
 		generated[*e.Number] = true
 	}
 	g.P("}")
@@ -1740,7 +1741,7 @@ func (g *Generator) getterDefault(field *descriptor.FieldDescriptorProto, goMess
 			return "0 // empty enum"
 		}
 		first := enum.Value[0].GetName()
-		return g.DefaultPackageName(obj) + enum.prefix() + first
+		return g.DefaultPackageName(obj) + first
 	default:
 		return "0"
 	}
@@ -2038,7 +2039,7 @@ func (g *Generator) generateDefaultConstants(mc *msgCtx, topLevelFields []topLev
 				log.Printf("don't know how to generate constant for %s", fieldname)
 				continue
 			}
-			def = g.DefaultPackageName(obj) + enum.prefix() + def
+			def = g.DefaultPackageName(obj) + def
 		}
 		g.P(kind, fieldname, " ", typename, " = ", def)
 		g.file.addExport(mc.message, constOrVarSymbol{fieldname, kind, ""})
