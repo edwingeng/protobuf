@@ -338,7 +338,6 @@ func (nf *nonFatal) Merge(err error) (ok bool) {
 type Message interface {
 	Reset()
 	String() string
-	ProtoMessage()
 }
 
 // A Buffer is a buffer manager for marshaling and unmarshaling

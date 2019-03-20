@@ -1674,7 +1674,6 @@ func (g *Generator) RecordTypeUse(t string) {
 var methodNames = [...]string{
 	"Reset",
 	"String",
-	"ProtoMessage",
 	"Marshal",
 	"Unmarshal",
 	"ExtensionRangeArray",
@@ -2128,10 +2127,9 @@ func (g *Generator) generateSetters(mc *msgCtx, topLevelFields []topLevelField) 
 
 // generateCommonMethods adds methods to the message that are not on a per field basis.
 func (g *Generator) generateCommonMethods(mc *msgCtx) {
-	// Reset, String and ProtoMessage methods.
+	// Reset and String methods.
 	g.P("func (m *", mc.goName, ") Reset() { *m = ", mc.goName, "{} }")
 	g.P("func (m *", mc.goName, ") String() string { return ", g.Pkg["proto"], ".CompactTextString(m) }")
-	g.P("func (*", mc.goName, ") ProtoMessage() {}")
 	var indexes []string
 	for m := mc.message; m != nil; m = m.parent {
 		indexes = append([]string{strconv.Itoa(m.index)}, indexes...)
